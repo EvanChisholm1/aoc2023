@@ -14,20 +14,30 @@ const [times, records] = input.split("\n").map((line) => {
     return numbers;
 });
 
+// quadratic function that models the win and losses
+// f(holdtime) = holdTime * (raceLength - holdTime) - record
+// f(holdtime) = -holdtime^2 + (holdtime * raceLength) - record
+
+// use quadratic formula to find the zeros and use them to get the range
+function quadraticFormula(a, b, c) {
+    const high = (-b + Math.sqrt(b * b - 4 * a * c)) / (2 * a);
+    const low = (-b - Math.sqrt(b * b - 4 * a * c)) / (2 * a);
+    return [low, high].sort((a, b) => a - b);
+}
+
 let answer = 1;
 
 for (let i = 0; i < times.length; i++) {
     const time = times[i];
     const record = records[i];
-    let winningStrats = 0;
 
-    for (let j = 0; j <= time; j++) {
-        const movingTime = time - j;
-        const speed = j;
-        const dist = movingTime * speed;
+    const [low, high] = quadraticFormula(-1, time, -record);
 
-        if (dist > record) winningStrats++;
-    }
+    // add and subtract one because you don't win on the zeros, only tie
+    const min = Math.floor(low) + 1;
+    const max = Math.ceil(high) - 1;
+    const winningStrats = max - min + 1;
+
     answer = answer * winningStrats;
 }
 
